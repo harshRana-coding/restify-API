@@ -1,6 +1,7 @@
 // const Server = require('restify/lib/server');
 const config = require('../config');
 const Customer = require('../models/Customer');
+const rjwt = require('restify-jwt-community');
 module.exports = server => {
     //Get customers
 
@@ -36,7 +37,7 @@ module.exports = server => {
 
     //Add Customer
 
-    server.post('/customers', (req, res, next) => {
+    server.post('/customers', rjwt({secret : config.JWT_SECRET}),(req, res, next) => {
         const name = req.body.name;
         const email = req.body.email;
         const balance = req.body.balance;
@@ -55,7 +56,7 @@ module.exports = server => {
 
     //Update Customer 
     
-    server.put('/customers/:id', (req,res,next) => {
+    server.put('/customers/:id', rjwt({secret : config.JWT_SECRET}),(req,res,next) => {
         Customer.findByIdAndUpdate({_id : req.params.id}, req.body).then(mssg => {
             console.log("customer data updated");
             res.send("Updated!!");
@@ -65,7 +66,7 @@ module.exports = server => {
 
     //delete customer
 
-    server.del('/customers/:id', (req,res,next)=> {
+    server.del('/customers/:id', rjwt({secret : config.JWT_SECRET}),(req,res,next)=> {
         Customer.findByIdAndDelete(req.params.id).then(mssg => {
             console.log("customer deleted");
             res.statusCode = 204;
